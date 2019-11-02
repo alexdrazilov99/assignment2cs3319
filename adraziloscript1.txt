@@ -1,0 +1,18 @@
+SHOW DATABASES;
+DROP DATABASE IF EXISTS adraziloassign2db;
+CREATE DATABASE adraziloassign2db;
+USE adraziloassign2db;
+
+GRANT USAGE ON *.* TO 'ta'@'localhost';
+DROP USER 'ta'@'localhost';
+CREATE USER 'ta'@'localhost' IDENTIFIED BY 'cs3319';
+GRANT ALL PRIVILEGES ON yourwesternuseridassign2db.* TO 'ta'@'localhost';
+FLUSH PRIVILEGES;
+
+SHOW TABLES;
+CREATE TABLE doctor (licenseNumber VARCHAR(4) PRIMARY KEY, fname VARCHAR(20), lname VARCHAR(20), specialty VARCHAR(30), licenseDate DATE, hospital VARCHAR(3), startDate DATE);
+CREATE TABLE patient (OHIPNum INT(9) PRIMARY KEY, fname VARCHAR(20), lname VARCHAR(20));
+CREATE TABLE hospital (OHIPCode VARCHAR(3) PRIMARY KEY, name VARCHAR(20), city VARCHAR(20), province VARCHAR(2), bedNum INT);
+CREATE TABLE treats (licenseNumber VARCHAR(4), OHIPNum INT(9), PRIMARY KEY (licenseNumber, OHIPNum), FOREIGN KEY (licenseNumber) REFERENCES doctor(licenseNumber), FOREIGN KEY (OHIPNum) REFERENCES patient(OHIPNum));
+ALTER TABLE doctor ADD FOREIGN KEY (hospital) REFERENCES hospital(OHIPCode);
+SHOW TABLES;

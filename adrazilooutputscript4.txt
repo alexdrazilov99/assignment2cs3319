@@ -1,0 +1,187 @@
+Warning: Using a password on the command line interface can be insecure.
+--------------
+SELECT * FROM doctor
+--------------
+
++---------------+----------+------------+------------------+-------------+----------+------------+
+| licenseNumber | fname    | lname      | specialty        | licenseDate | hospital | startDate  |
++---------------+----------+------------+------------------+-------------+----------+------------+
+| AA11          | Virginia | Apgar      | Anesthesiologist | 1937-06-07  | ABC      | NULL       |
+| GD56          | Joey     | Shabado    | Podiatrist       | 1960-06-24  | BBC      | 1999-09-10 |
+| HT45          | Ross     | Clooney    | Surgeon          | 1987-06-20  | DDE      | NULL       |
+| JK78          | Mandy    | Webster    | Surgeon          | 1990-08-08  | BBC      | NULL       |
+| RD34          | Bernie   | Kavorikian | Urologist        | 1980-09-09  | BBC      | NULL       |
+| SE66          | Colleen  | Aziz       | Surgeon          | 1989-08-24  | ABC      | 1994-12-05 |
+| YT67          | Ben      | Spock      | Pediatrician     | 1955-02-20  | DDE      | 1997-12-07 |
++---------------+----------+------------+------------------+-------------+----------+------------+
+7 rows in set (0.00 sec)
+
+ERROR 1451 (23000) at line 5: Cannot delete or update a parent row: a foreign key constraint fails (`adraziloassign2db`.`treats`, CONSTRAINT `treats_ibfk_1` FOREIGN KEY (`licenseNumber`) REFERENCES `doctor` (`licenseNumber`))
+--------------
+DELETE FROM doctor WHERE licenseDate > '1965-01-01'
+--------------
+
+--------------
+SELECT * FROM patient
+--------------
+
++-----------+---------+----------+
+| OHIPNum   | fname   | lname    |
++-----------+---------+----------+
+| 110112113 | Bill    | Gellar   |
+| 111222111 | Suzi    | Brown    |
+| 111222333 | Jon     | Green    |
+| 123456789 | Alex    | Drazilov |
+| 333444555 | Colleen | Gellar   |
+| 444555666 | Sean    | Gellar   |
+| 667766777 | Scotty  | Bing     |
++-----------+---------+----------+
+7 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM hospital
+--------------
+
++----------+------------+----------+----------+--------+
+| OHIPCode | name       | city     | province | bedNum |
++----------+------------+----------+----------+--------+
+| ABC      | Victoria   | London   | On       |   1600 |
+| BBC      | St. Joseph | London   | On       |   1000 |
+| DDE      | Victoria   | Victoria | BC       |   1200 |
++----------+------------+----------+----------+--------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM doctor
+--------------
+
++---------------+----------+------------+------------------+-------------+----------+------------+
+| licenseNumber | fname    | lname      | specialty        | licenseDate | hospital | startDate  |
++---------------+----------+------------+------------------+-------------+----------+------------+
+| AA11          | Virginia | Apgar      | Anesthesiologist | 1937-06-07  | ABC      | NULL       |
+| GD56          | Joey     | Shabado    | Podiatrist       | 1960-06-24  | BBC      | 1999-09-10 |
+| HT45          | Ross     | Clooney    | Surgeon          | 1987-06-20  | DDE      | NULL       |
+| JK78          | Mandy    | Webster    | Surgeon          | 1990-08-08  | BBC      | NULL       |
+| RD34          | Bernie   | Kavorikian | Urologist        | 1980-09-09  | BBC      | NULL       |
+| SE66          | Colleen  | Aziz       | Surgeon          | 1989-08-24  | ABC      | 1994-12-05 |
+| YT67          | Ben      | Spock      | Pediatrician     | 1955-02-20  | DDE      | 1997-12-07 |
++---------------+----------+------------+------------------+-------------+----------+------------+
+7 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM treats
+--------------
+
++---------------+-----------+
+| licenseNumber | OHIPNum   |
++---------------+-----------+
+| GD56          | 110112113 |
+| HT45          | 111222111 |
+| HT45          | 111222333 |
+| JK78          | 111222333 |
+| SE66          | 111222333 |
+| SE66          | 123456789 |
+| GD56          | 333444555 |
+| HT45          | 444555666 |
+| JK78          | 444555666 |
+| GD56          | 667766777 |
+| HT45          | 667766777 |
+| JK78          | 667766777 |
++---------------+-----------+
+12 rows in set (0.00 sec)
+
+--------------
+CREATE VIEW NewView AS SELECT p.fname, p.lname, d.fname AS 'Doc Name', h.name 
+FROM patient p 
+JOIN treats t
+    ON t.OHIPNum = p.OHIPNum
+JOIN doctor d 
+    ON t.licenseNumber = d.licenseNumber 
+JOIN hospital h 
+    ON h.OHIPCode = d.hospital 
+WHERE d.startDate IS NOT NULL AND d.startDate > '1995-12-01'
+--------------
+
+Query OK, 0 rows affected (0.01 sec)
+
+--------------
+SELECT * FROM NewView
+--------------
+
++---------+--------+----------+------------+
+| fname   | lname  | Doc Name | name       |
++---------+--------+----------+------------+
+| Bill    | Gellar | Joey     | St. Joseph |
+| Colleen | Gellar | Joey     | St. Joseph |
+| Scotty  | Bing   | Joey     | St. Joseph |
++---------+--------+----------+------------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM doctor
+--------------
+
++---------------+----------+------------+------------------+-------------+----------+------------+
+| licenseNumber | fname    | lname      | specialty        | licenseDate | hospital | startDate  |
++---------------+----------+------------+------------------+-------------+----------+------------+
+| AA11          | Virginia | Apgar      | Anesthesiologist | 1937-06-07  | ABC      | NULL       |
+| GD56          | Joey     | Shabado    | Podiatrist       | 1960-06-24  | BBC      | 1999-09-10 |
+| HT45          | Ross     | Clooney    | Surgeon          | 1987-06-20  | DDE      | NULL       |
+| JK78          | Mandy    | Webster    | Surgeon          | 1990-08-08  | BBC      | NULL       |
+| RD34          | Bernie   | Kavorikian | Urologist        | 1980-09-09  | BBC      | NULL       |
+| SE66          | Colleen  | Aziz       | Surgeon          | 1989-08-24  | ABC      | 1994-12-05 |
+| YT67          | Ben      | Spock      | Pediatrician     | 1955-02-20  | DDE      | 1997-12-07 |
++---------------+----------+------------+------------------+-------------+----------+------------+
+7 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM treats
+--------------
+
++---------------+-----------+
+| licenseNumber | OHIPNum   |
++---------------+-----------+
+| GD56          | 110112113 |
+| HT45          | 111222111 |
+| HT45          | 111222333 |
+| JK78          | 111222333 |
+| SE66          | 111222333 |
+| SE66          | 123456789 |
+| GD56          | 333444555 |
+| HT45          | 444555666 |
+| JK78          | 444555666 |
+| GD56          | 667766777 |
+| HT45          | 667766777 |
+| JK78          | 667766777 |
++---------------+-----------+
+12 rows in set (0.00 sec)
+
+ERROR 1451 (23000) at line 29: Cannot delete or update a parent row: a foreign key constraint fails (`adraziloassign2db`.`treats`, CONSTRAINT `treats_ibfk_1` FOREIGN KEY (`licenseNumber`) REFERENCES `doctor` (`licenseNumber`))
+--------------
+DELETE FROM doctor WHERE lname = 'Clooney'
+--------------
+
+--------------
+SELECT * FROM doctor
+--------------
+
++---------------+----------+------------+------------------+-------------+----------+------------+
+| licenseNumber | fname    | lname      | specialty        | licenseDate | hospital | startDate  |
++---------------+----------+------------+------------------+-------------+----------+------------+
+| AA11          | Virginia | Apgar      | Anesthesiologist | 1937-06-07  | ABC      | NULL       |
+| GD56          | Joey     | Shabado    | Podiatrist       | 1960-06-24  | BBC      | 1999-09-10 |
+| HT45          | Ross     | Clooney    | Surgeon          | 1987-06-20  | DDE      | NULL       |
+| JK78          | Mandy    | Webster    | Surgeon          | 1990-08-08  | BBC      | NULL       |
+| RD34          | Bernie   | Kavorikian | Urologist        | 1980-09-09  | BBC      | NULL       |
+| SE66          | Colleen  | Aziz       | Surgeon          | 1989-08-24  | ABC      | 1994-12-05 |
+| YT67          | Ben      | Spock      | Pediatrician     | 1955-02-20  | DDE      | 1997-12-07 |
++---------------+----------+------------+------------------+-------------+----------+------------+
+7 rows in set (0.00 sec)
+
+ERROR 1451 (23000) at line 34: Cannot delete or update a parent row: a foreign key constraint fails (`adraziloassign2db`.`treats`, CONSTRAINT `treats_ibfk_1` FOREIGN KEY (`licenseNumber`) REFERENCES `doctor` (`licenseNumber`))
+--------------
+DELETE FROM doctor WHERE specialty = 'Surgeon'
+--------------
+
+Bye
+

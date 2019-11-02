@@ -1,0 +1,36 @@
+USE adraziloassign2db;
+
+SELECT * FROM doctor;
+
+DELETE FROM doctor WHERE licenseDate > '1965-01-01';
+#treats will not allow doctor to be deleted since it is part of the primary key.
+
+SELECT * FROM patient;
+SELECT * FROM hospital;
+SELECT * FROM doctor;
+SELECT * FROM treats;
+
+CREATE VIEW NewView AS SELECT p.fname, p.lname, d.fname AS 'Doc Name', h.name 
+FROM patient p 
+JOIN treats t
+    ON t.OHIPNum = p.OHIPNum
+JOIN doctor d 
+    ON t.licenseNumber = d.licenseNumber 
+JOIN hospital h 
+    ON h.OHIPCode = d.hospital 
+WHERE d.startDate IS NOT NULL AND d.startDate > '1995-12-01';
+
+
+SELECT * FROM NewView;
+
+SELECT * FROM doctor;
+SELECT * FROM treats;
+
+DELETE FROM doctor WHERE lname = 'Clooney';
+#treats will not allow doctor to be deleted since it is part of the primary key.
+
+SELECT * FROM doctor;
+
+DELETE FROM doctor WHERE specialty = 'Surgeon';
+# treats will not allow doctor to be deleted since it is part of the primary key.
+

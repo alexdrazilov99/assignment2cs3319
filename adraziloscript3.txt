@@ -1,0 +1,76 @@
+USE adraziloassign2db;
+
+--  Query 1
+SELECT lname FROM patient;
+
+--  Query 2
+SELECT DISTINCT lname FROM patient;
+
+--  Query 3
+SELECT * FROM doctor ORDER BY lname ASC;
+
+--  Query 4
+SELECT name, OHIPCode FROM hospital WHERE bedNum > 1500;
+
+--  Query 5
+SELECT lname, fname
+FROM
+    doctor d
+JOIN hospital h 
+    ON d.hospital = h.OHIPCode 
+WHERE h.name = 'St. Joseph';
+
+--  Query 6
+SELECT fname, lname FROM patient WHERE lname LIKE 'G%';
+
+--  Query 7
+SELECT p.lname, p.fname
+FROM
+    patient p 
+JOIN treats t
+    ON t.OHIPNum = p.OHIPNum 
+JOIN doctor d 
+    ON t.licenseNumber = d.licenseNumber 
+WHERE d.lname = 'Clooney';
+
+--  Query 8
+SELECT h.name, h.city, d.lname
+FROM 
+    hospital h
+JOIN doctor d
+    ON d.hospital = h.OHIPCode 
+WHERE d.startDate IS NOT NULL;
+
+--  Query 9
+SELECT SUM(bedNum) AS 'Total Number of Beds' FROM hospital;
+
+--  Query 10
+SELECT p.fname, d.fname
+FROM
+    patient p 
+JOIN treats t
+    ON t.OHIPNum = p.OHIPNum 
+JOIN doctor d 
+    ON t.licenseNumber = d.licenseNumber 
+WHERE d.startDate IS NOT NULL;
+
+--  Query 11
+SELECT d.lname, d.fname
+FROM
+    doctor d 
+JOIN hospital h 
+    ON h.OHIPCode = d.hospital  
+WHERE h.name = 'Victoria' AND d.specialty = 'Surgeon';
+
+--  Query 12
+SELECT d.fname
+FROM doctor d
+WHERE NOT EXISTS (SELECT licenseNumber FROM treats t WHERE d.licenseNumber = t.licenseNumber);
+
+--  Query 13
+SELECT d.lname, d.fname
+FROM doctor d
+JOIN treats t 
+    ON t.licenseNumber = d.licenseNumber  
+GROUP BY (t.licenseNumber) 
+HAVING COUNT(t.OHIPNum) > 1;

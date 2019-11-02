@@ -1,0 +1,217 @@
+Warning: Using a password on the command line interface can be insecure.
+--------------
+SELECT lname FROM patient
+--------------
+
++----------+
+| lname    |
++----------+
+| Gellar   |
+| Brown    |
+| Green    |
+| Drazilov |
+| Gellar   |
+| Gellar   |
+| Bing     |
++----------+
+7 rows in set (0.00 sec)
+
+--------------
+SELECT DISTINCT lname FROM patient
+--------------
+
++----------+
+| lname    |
++----------+
+| Gellar   |
+| Brown    |
+| Green    |
+| Drazilov |
+| Bing     |
++----------+
+5 rows in set (0.00 sec)
+
+--------------
+SELECT * FROM doctor ORDER BY lname ASC
+--------------
+
++---------------+----------+------------+------------------+-------------+----------+------------+
+| licenseNumber | fname    | lname      | specialty        | licenseDate | hospital | startDate  |
++---------------+----------+------------+------------------+-------------+----------+------------+
+| AA11          | Virginia | Apgar      | Anesthesiologist | 1937-06-07  | ABC      | NULL       |
+| SE66          | Colleen  | Aziz       | Surgeon          | 1989-08-24  | ABC      | 1994-12-05 |
+| HT45          | Ross     | Clooney    | Surgeon          | 1987-06-20  | DDE      | NULL       |
+| RD34          | Bernie   | Kavorikian | Urologist        | 1980-09-09  | BBC      | NULL       |
+| GD56          | Joey     | Shabado    | Podiatrist       | 1960-06-24  | BBC      | 1999-09-10 |
+| YT67          | Ben      | Spock      | Pediatrician     | 1955-02-20  | DDE      | 1997-12-07 |
+| JK78          | Mandy    | Webster    | Surgeon          | 1990-08-08  | BBC      | NULL       |
++---------------+----------+------------+------------------+-------------+----------+------------+
+7 rows in set (0.00 sec)
+
+--------------
+SELECT name, OHIPCode FROM hospital WHERE bedNum > 1500
+--------------
+
++----------+----------+
+| name     | OHIPCode |
++----------+----------+
+| Victoria | ABC      |
++----------+----------+
+1 row in set (0.00 sec)
+
+--------------
+SELECT lname, fname
+FROM
+    doctor d
+JOIN hospital h 
+    ON d.hospital = h.OHIPCode 
+WHERE h.name = 'St. Joseph'
+--------------
+
++------------+--------+
+| lname      | fname  |
++------------+--------+
+| Shabado    | Joey   |
+| Webster    | Mandy  |
+| Kavorikian | Bernie |
++------------+--------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT fname, lname FROM patient WHERE lname LIKE 'G%'
+--------------
+
++---------+--------+
+| fname   | lname  |
++---------+--------+
+| Bill    | Gellar |
+| Jon     | Green  |
+| Colleen | Gellar |
+| Sean    | Gellar |
++---------+--------+
+4 rows in set (0.00 sec)
+
+--------------
+SELECT p.lname, p.fname
+FROM
+    patient p 
+JOIN treats t
+    ON t.OHIPNum = p.OHIPNum 
+JOIN doctor d 
+    ON t.licenseNumber = d.licenseNumber 
+WHERE d.lname = 'Clooney'
+--------------
+
++--------+--------+
+| lname  | fname  |
++--------+--------+
+| Brown  | Suzi   |
+| Green  | Jon    |
+| Gellar | Sean   |
+| Bing   | Scotty |
++--------+--------+
+4 rows in set (0.00 sec)
+
+--------------
+SELECT h.name, h.city, d.lname
+FROM 
+    hospital h
+JOIN doctor d
+    ON d.hospital = h.OHIPCode 
+WHERE d.startDate IS NOT NULL
+--------------
+
++------------+----------+---------+
+| name       | city     | lname   |
++------------+----------+---------+
+| St. Joseph | London   | Shabado |
+| Victoria   | London   | Aziz    |
+| Victoria   | Victoria | Spock   |
++------------+----------+---------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT SUM(bedNum) AS 'Total Number of Beds' FROM hospital
+--------------
+
++----------------------+
+| Total Number of Beds |
++----------------------+
+|                 3800 |
++----------------------+
+1 row in set (0.00 sec)
+
+--------------
+SELECT p.fname, d.fname
+FROM
+    patient p 
+JOIN treats t
+    ON t.OHIPNum = p.OHIPNum 
+JOIN doctor d 
+    ON t.licenseNumber = d.licenseNumber 
+WHERE d.startDate IS NOT NULL
+--------------
+
++---------+---------+
+| fname   | fname   |
++---------+---------+
+| Bill    | Joey    |
+| Jon     | Colleen |
+| Alex    | Colleen |
+| Colleen | Joey    |
+| Scotty  | Joey    |
++---------+---------+
+5 rows in set (0.00 sec)
+
+--------------
+SELECT d.lname, d.fname
+FROM
+    doctor d 
+JOIN hospital h 
+    ON h.OHIPCode = d.hospital  
+WHERE h.name = 'Victoria' AND d.specialty = 'Surgeon'
+--------------
+
++---------+---------+
+| lname   | fname   |
++---------+---------+
+| Clooney | Ross    |
+| Aziz    | Colleen |
++---------+---------+
+2 rows in set (0.00 sec)
+
+--------------
+SELECT d.fname
+FROM doctor d
+WHERE NOT EXISTS (SELECT licenseNumber FROM treats t WHERE d.licenseNumber = t.licenseNumber)
+--------------
+
++----------+
+| fname    |
++----------+
+| Virginia |
+| Bernie   |
+| Ben      |
++----------+
+3 rows in set (0.00 sec)
+
+--------------
+SELECT d.lname, d.fname
+FROM doctor d
+JOIN treats t 
+    ON t.licenseNumber = d.licenseNumber  
+GROUP BY (t.licenseNumber) 
+HAVING COUNT(t.OHIPNum) > 1
+--------------
+
++---------+---------+
+| lname   | fname   |
++---------+---------+
+| Shabado | Joey    |
+| Clooney | Ross    |
+| Webster | Mandy   |
+| Aziz    | Colleen |
++---------+---------+
+4 rows in set (0.00 sec)
+
+Bye
